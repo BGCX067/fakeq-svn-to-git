@@ -1,0 +1,15 @@
+all:
+  erp:
+    class: sfDoctrineDatabase
+    param:
+      dsn: 'mysql:host=localhost;dbname=erp'
+      username: root
+      password: null
+      
+  bd:
+    class: sfDoctrineDatabase
+    param:
+      dsn: 'mysql:host=localhost;dbname=bd'
+      username: root
+      password: null
+      

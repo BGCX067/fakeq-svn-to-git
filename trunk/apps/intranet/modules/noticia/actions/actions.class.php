@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * noticia actions.
+ *
+ * @package    tcc
+ * @subpackage noticia
+ * @author     Your name here
+ * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
+ */
+class noticiaActions extends sfActions {
+
+    public function executeIndex(sfWebRequest $request) {
+        $this->noticias = Doctrine_Core::getTable('noticia')
+                ->createQuery('a')
+                ->execute();
+    }
+
+    public function executeShow(sfWebRequest $request) {
+        $this->noticias = Doctrine_Core::getTable('noticia')
+                ->createQuery('a')
+                ->execute();
+    }
+
+    public function executeNew(sfWebRequest $request) {
+        $this->form = new noticiaForm();
+    }
+
+    public function executeCreate(sfWebRequest $request) {
+        $this->forward404Unless($request->isMethod(sfRequest::POST));
+
+        $this->form = new noticiaForm();
+
+        $this->processForm($request, $this->form);
+
+        $this->setTemplate('new');
+    }
+
+    public function executeEdit(sfWebRequest $request) {
+        $this->forward404Unless($noticia = Doctrine_Core::getTable('noticia')->find(array($request->getParameter('cod_noticia'))), sprintf('Object noticia does not exist (%s).', $request->getParameter('cod_noticia')));
+        $this->form = new noticiaForm($noticia);
+    }
+
+    public function executeUpdate(sfWebRequest $request) {
+        $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
+        $this->forward404Unless($noticia = Doctrine_Core::getTable('noticia')->find(array($request->getParameter('cod_noticia'))), sprintf('Object noticia does not exist (%s).', $request->getParameter('cod_noticia')));
+        $this->form = new noticiaForm($noticia);
+
+        $this->processForm($request, $this->form);
+
+        $this->setTemplate('edit');
+    }
+
+    public function executeDelete(sfWebRequest $request) {
+        $request->checkCSRFProtection();
+
+        $this->forward404Unless($noticia = Doctrine_Core::getTable('noticia')->find(array($request->getParameter('cod_noticia'))), sprintf('Object noticia does not exist (%s).', $request->getParameter('cod_noticia')));
+        $noticia->delete();
+
+        $this->redirect('noticia/index');
+    }
+
+    protected function processForm(sfWebRequest $request, sfForm $form) {
+        $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+        if ($form->isValid()) {
+            $noticia = $form->save();
+
+            $this->redirect('noticia/edit?cod_noticia=' . $noticia->getCodNoticia());
+        }
+    }
+
+}
